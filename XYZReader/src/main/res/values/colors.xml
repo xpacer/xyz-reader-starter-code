@@ -26,4 +26,5 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="black_opa_70">#B3000000</color>
     <color name="black_opa_30">#4D000000</color>
+    <color name="black">#000000</color>
 </resources>
