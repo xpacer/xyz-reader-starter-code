@@ -17,6 +17,7 @@
 
 <resources>
     <color name="colorPrimary">#FF6601</color>
+    <color name="colorPrimaryDark">#AA6430</color>
     <color name="photo_placeholder">#ccc</color>
 
     <color name="theme_primary">#04561A</color>

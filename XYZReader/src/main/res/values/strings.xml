@@ -8,5 +8,7 @@
     <string name="action_share">Share</string>
 
     <string name="up">Up</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Read less</string>
 
 </resources>

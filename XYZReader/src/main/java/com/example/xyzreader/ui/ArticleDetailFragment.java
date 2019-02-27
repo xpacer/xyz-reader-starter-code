@@ -6,14 +6,10 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -54,6 +50,7 @@ public class ArticleDetailFragment extends Fragment implements
     private int mMutedColor = 0xFF333333;
     private ImageView mPhotoView;
     private boolean mIsCard = false;
+    private boolean fullTextShown;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -62,6 +59,7 @@ public class ArticleDetailFragment extends Fragment implements
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
+    private TextView mReadMoreButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -117,8 +115,9 @@ public class ArticleDetailFragment extends Fragment implements
                 , R.color.colorWhite));
 
 
-
         mToolbar = mRootView.findViewById(R.id.toolbar);
+        mReadMoreButton = mRootView.findViewById(R.id.read_more_button);
+
         getActivityCast().setSupportActionBar(mToolbar);
         getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -162,7 +161,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        final TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -188,7 +187,8 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)
+                    .substring(0, 1000).replaceAll("(\r\n|\n)", "<br />")));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -214,6 +214,21 @@ public class ArticleDetailFragment extends Fragment implements
             bylineView.setText("N/A");
             bodyView.setText("N/A");
         }
+
+        mReadMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fullTextShown) {
+                    bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)
+                            .substring(0, 1000).replaceAll("(\r\n|\n)", "<br />")));
+                    mReadMoreButton.setText(R.string.read_more);
+                } else {
+                    bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)
+                            .replaceAll("(\r\n|\n)", "<br />")));
+                    mReadMoreButton.setText(R.string.read_less);
+                }
+            }
+        });
     }
 
     @Override
